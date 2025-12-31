@@ -4,14 +4,25 @@ import { RouterOutlet } from '@angular/router';
 import { TvService } from './services/tv.service';
 import { DeviceInfo } from '@mimir/shared';
 import { ModalComponent } from './components/modal/modal.component';
+import { LucideAngularModule, Eye, RefreshCw, Loader2 } from 'lucide-angular';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule, ModalComponent],
+  imports: [RouterOutlet, CommonModule, ModalComponent, LucideAngularModule],
+  providers: [],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
 export class App implements OnInit {
+  // We need to expose icons to the template if we want to use [img] binding,
+  // OR we use the name attribute if we provided them.
+  // But LucideAngularModule.pick({ ... }) returns a ModuleWithProviders.
+  // Let's use the provider approach which is arguably safer if pick isn't working as I expect in this specific version.
+  // Actually, let's stick to the most robust way:
+  // Import the icons in the class and bind them: <lucide-icon [img]="Eye" />
+  readonly Eye = Eye;
+  readonly RefreshCw = RefreshCw;
+  readonly Loader2 = Loader2;
   private tvService = inject(TvService);
 
   protected readonly title = signal('Mimir Control');

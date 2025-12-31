@@ -9,21 +9,21 @@
     <div class="flex flex-col items-center text-center">
       @if (type() === 'success') {
         <div
-          class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10 text-4xl text-green-500 shadow-[0_0_15px_-3px_rgb(34,197,94,0.3)]"
+          class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10 text-green-500 shadow-[0_0_15px_-3px_rgb(34,197,94,0.3)]"
         >
-          ✓
+          <lucide-icon [img]="Check" class="h-10 w-10"></lucide-icon>
         </div>
       } @else if (type() === 'error') {
         <div
-          class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10 text-4xl text-red-500 shadow-[0_0_15px_-3px_rgb(239,68,68,0.3)]"
+          class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10 text-red-500 shadow-[0_0_15px_-3px_rgb(239,68,68,0.3)]"
         >
-          ✕
+          <lucide-icon [img]="X" class="h-10 w-10"></lucide-icon>
         </div>
       } @else {
         <div
-          class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/10 text-4xl text-blue-500 shadow-[0_0_15px_-3px_rgb(59,130,246,0.3)]"
+          class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/10 text-blue-500 shadow-[0_0_15px_-3px_rgb(59,130,246,0.3)]"
         >
-          ℹ
+          <lucide-icon [img]="Info" class="h-10 w-10"></lucide-icon>
         </div>
       }
 

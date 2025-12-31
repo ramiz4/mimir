@@ -1,7 +1,10 @@
 <div class="mx-auto max-w-[1200px] p-8">
   <header class="mb-12 flex items-center justify-between border-b border-white/5 pb-6">
     <div class="flex items-center gap-4">
-      <span class="text-[2.5rem] drop-shadow-[0_0_10px_#6366f1]">👁️</span>
+      <lucide-icon
+        [img]="Eye"
+        class="text-mimir-primary h-12 w-12 drop-shadow-[0_0_10px_rgba(99,102,241,0.5)]"
+      ></lucide-icon>
       <h1
         class="m-0 bg-linear-to-br from-white to-mimir-primary bg-clip-text text-[2rem] font-bold text-transparent"
       >
@@ -20,7 +23,7 @@
         class="cursor-pointer rounded-[12px] border border-white/5 bg-mimir-card p-3 text-white transition-all duration-200 hover:bg-slate-700"
         (click)="refreshDevices()"
       >
-        🔄
+        <lucide-icon [img]="RefreshCw" class="h-5 w-5"></lucide-icon>
       </button>
     </div>
   </header>
@@ -28,9 +31,10 @@
   <main>
     @if (loading() && devices().length === 0) {
       <div class="py-20 text-center">
-        <div
-          class="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-white/5 border-t-mimir-primary"
-        ></div>
+        <lucide-icon
+          [img]="Loader2"
+          class="mx-auto mb-4 h-10 w-10 animate-spin text-mimir-primary"
+        ></lucide-icon>
         <p>Seeking wisdom from the network...</p>
       </div>
     } @else {
