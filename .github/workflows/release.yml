@@ -1,9 +1,7 @@
-name: CI/CD
+name: Release
 
 on:
   push:
-    branches: [main, master]
-  pull_request:
     branches: [main, master]
 
 permissions:
@@ -14,7 +12,7 @@ permissions:
 
 jobs:
   quality-check:
-    name: Lint, Test & Build
+    name: Final Quality Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -51,19 +49,15 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-      - name: Build Shared
-        run: pnpm --filter @mimir/shared build
-
-      - name: Build Server
-        run: pnpm --filter mimir-server build
-
-      - name: Build App
-        run: pnpm --filter @mimir/app build
+      - name: Build All
+        run: |
+          pnpm --filter @mimir/shared build
+          pnpm --filter mimir-server build
+          pnpm --filter @mimir/app build
 
   release:
-    name: Release
+    name: Semantic Release
     needs: quality-check
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

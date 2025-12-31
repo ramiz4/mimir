@@ -1,1 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* You can add global styles to this file, and also import other style files */
+body {
+  @apply bg-[#0f172a] text-[#f8fafc] min-h-screen antialiased;
+  font-family:
+    'Inter',
+    -apple-system,
+    system-ui,
+    sans-serif;
+}
