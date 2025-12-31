@@ -140,5 +140,13 @@
       </div>
     </div>
   }
+  @if (modalState()) {
+    <app-modal
+      [title]="modalState()!.title"
+      [message]="modalState()!.message"
+      [type]="modalState()!.type"
+      (close)="closeModal()"
+    />
+  }
 </div>
 <router-outlet />

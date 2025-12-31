@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { TvService } from './services/tv.service';
 import { DeviceInfo } from '@mimir/shared';
+import { ModalComponent } from './components/modal/modal.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule],
+  imports: [RouterOutlet, CommonModule, ModalComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -18,6 +19,12 @@ export class App implements OnInit {
   protected readonly loading = signal(false);
   protected readonly scanning = signal(false);
   protected readonly pinRequired = signal<string | null>(null);
+
+  protected readonly modalState = signal<{
+    title: string;
+    message: string;
+    type: 'success' | 'error' | 'info';
+  } | null>(null);
 
   ngOnInit(): void {
     this.refreshDevices();
@@ -58,10 +65,10 @@ export class App implements OnInit {
         if (res.pinRequired) {
           this.pinRequired.set(ip);
         } else {
-          alert('Connected successfully! No PIN required.');
+          this.showModal('Success', 'Connected successfully! No PIN required.', 'success');
         }
       },
-      error: (err) => alert('Connection failed: ' + err.message),
+      error: (err) => this.showModal('Connection Failed', err.message, 'error'),
     });
   }
 
@@ -72,13 +79,21 @@ export class App implements OnInit {
     this.tvService.confirmPin(ip, pin).subscribe({
       next: () => {
         this.pinRequired.set(null);
-        alert('Connected successfully!');
+        this.showModal('Success', 'Connected successfully!', 'success');
       },
-      error: (err) => alert('PIN verification failed: ' + err.message),
+      error: (err) => this.showModal('Error', 'PIN verification failed: ' + err.message, 'error'),
     });
   }
 
   cancelPin(): void {
     this.pinRequired.set(null);
+  }
+
+  private showModal(title: string, message: string, type: 'success' | 'error' | 'info' = 'info') {
+    this.modalState.set({ title, message, type });
+  }
+
+  closeModal() {
+    this.modalState.set(null);
   }
 }
