@@ -17,6 +17,7 @@ export class App implements OnInit {
   protected readonly devices = signal<DeviceInfo[]>([]);
   protected readonly loading = signal(false);
   protected readonly scanning = signal(false);
+  protected readonly pinRequired = signal<string | null>(null);
 
   ngOnInit(): void {
     this.refreshDevices();
@@ -49,5 +50,35 @@ export class App implements OnInit {
       next: (res) => console.log('Command sent:', res),
       error: (err) => console.error('Command failed:', err),
     });
+  }
+
+  initConnection(ip: string): void {
+    this.tvService.register(ip).subscribe({
+      next: (res) => {
+        if (res.pinRequired) {
+          this.pinRequired.set(ip);
+        } else {
+          alert('Connected successfully! No PIN required.');
+        }
+      },
+      error: (err) => alert('Connection failed: ' + err.message),
+    });
+  }
+
+  submitPin(pin: string): void {
+    const ip = this.pinRequired();
+    if (!ip || !pin) return;
+
+    this.tvService.confirmPin(ip, pin).subscribe({
+      next: () => {
+        this.pinRequired.set(null);
+        alert('Connected successfully!');
+      },
+      error: (err) => alert('PIN verification failed: ' + err.message),
+    });
+  }
+
+  cancelPin(): void {
+    this.pinRequired.set(null);
   }
 }

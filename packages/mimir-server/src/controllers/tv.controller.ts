@@ -33,4 +33,40 @@ export class TVController {
       return res.status(500).json({ error: message });
     }
   }
+
+  public static async register(req: Request, res: Response): Promise<Response | void> {
+    const { ip } = req.params;
+
+    if (!ip) return res.status(400).json({ error: 'IP required' });
+
+    const tv = discoveryService.getDevice(ip);
+
+    if (!tv) return res.status(404).json({ error: 'TV not found' });
+
+    try {
+      const pinRequired = await tv.register();
+      return res.json({ message: 'Registration initiated', pinRequired });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+
+  public static async confirmPin(req: Request, res: Response): Promise<Response | void> {
+    const { ip } = req.params;
+    const { pin } = req.body;
+
+    if (!ip) return res.status(400).json({ error: 'IP required' });
+    if (!pin) return res.status(400).json({ error: 'PIN required' });
+
+    const tv = discoveryService.getDevice(ip);
+
+    if (!tv) return res.status(404).json({ error: 'TV not found' });
+
+    try {
+      await tv.confirmPin(pin);
+      return res.json({ message: 'Device registered successfully' });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
 }

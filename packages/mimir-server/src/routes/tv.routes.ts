@@ -6,6 +6,8 @@ const router: Router = Router();
 /**
  * @openapi
  * /api/devices:
+ * @openapi
+ * /api/devices:
  *   get:
  *     summary: List all discovered TVs
  *     description: Returns an array of all TVs currently discovered in the network.
@@ -76,5 +78,56 @@ router.get('/discover', TVController.discover);
  *         description: Communication error with the device
  */
 router.post('/command/:ip/:name', TVController.sendCommand);
+
+/**
+ * @openapi
+ * /api/device/{ip}/register:
+ *   post:
+ *     summary: Initiate device registration
+ *     description: Triggers the pairing process (e.g., displaying a PIN on the TV).
+ *     parameters:
+ *       - in: path
+ *         name: ip
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Registration initiated
+ *       404:
+ *         description: TV not found
+ */
+router.post('/device/:ip/register', TVController.register);
+
+/**
+ * @openapi
+ * /api/device/{ip}/confirm-pin:
+ *   post:
+ *     summary: Confirm registration PIN
+ *     description: Sends the PIN displayed on the TV to complete pairing.
+ *     parameters:
+ *       - in: path
+ *         name: ip
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               pin:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Device registered successfully
+ *       400:
+ *         description: Invalid PIN or parameters
+ *       404:
+ *         description: TV not found
+ */
+router.post('/device/:ip/confirm-pin', TVController.confirmPin);
 
 export default router;

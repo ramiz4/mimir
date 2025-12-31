@@ -20,6 +20,14 @@ export abstract class BaseTV {
 
   abstract getAvailableCommands(): string[];
 
+  async register(): Promise<boolean> {
+    throw new Error('Registration not supported for this device');
+  }
+
+  async confirmPin(_pin: string): Promise<void> {
+    throw new Error('PIN confirmation not supported for this device');
+  }
+
   toJSON(): DeviceInfo {
     return {
       ip: this.ip,

@@ -52,7 +52,15 @@
               </span>
               <h2 class="m-0 text-[1.25rem]">{{ tv.name }}</h2>
               <p class="my-1 text-[0.9rem] text-mimir-muted">{{ tv.model }}</p>
-              <p class="m-0 font-mono text-[0.85rem] text-mimir-primary">{{ tv.ip }}</p>
+              <div class="flex items-center justify-between">
+                <p class="m-0 font-mono text-[0.85rem] text-mimir-primary">{{ tv.ip }}</p>
+                <button
+                  class="cursor-pointer rounded-[4px] bg-white/10 px-2 py-1 text-[0.75rem] font-semibold text-white transition-colors hover:bg-mimir-primary"
+                  (click)="initConnection(tv.ip)"
+                >
+                  Connect
+                </button>
+              </div>
             </div>
 
             <div>
@@ -95,6 +103,41 @@
         <div class="absolute left-0 top-0 h-full w-1/2 animate-progress bg-white"></div>
       </div>
       <span>SSDP Discovery in progress...</span>
+    </div>
+  }
+  @if (pinRequired()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div
+        class="w-full max-w-md rounded-[16px] border border-white/10 bg-mimir-card p-6 shadow-2xl"
+      >
+        <h3 class="mb-4 text-xl font-bold text-white">Enter PIN</h3>
+        <p class="mb-6 text-sm text-mimir-muted">
+          Please enter the pairing code displayed on your TV.
+        </p>
+
+        <input
+          #pinInput
+          type="text"
+          placeholder="0000"
+          class="mb-6 w-full rounded-[8px] border border-white/10 bg-black/20 p-4 text-center text-2xl font-mono tracking-[0.5em] text-white outline-none focus:border-mimir-primary focus:ring-1 focus:ring-mimir-primary"
+          (keyup.enter)="submitPin(pinInput.value)"
+        />
+
+        <div class="flex gap-3">
+          <button
+            (click)="cancelPin()"
+            class="flex-1 rounded-[8px] bg-white/5 py-3 font-semibold text-white transition-colors hover:bg-white/10"
+          >
+            Cancel
+          </button>
+          <button
+            (click)="submitPin(pinInput.value)"
+            class="flex-1 rounded-[8px] bg-mimir-primary py-3 font-semibold text-white transition-colors hover:bg-mimir-primary-hover"
+          >
+            Connect
+          </button>
+        </div>
+      </div>
     </div>
   }
 </div>
