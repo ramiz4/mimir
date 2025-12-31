@@ -1,0 +1,64 @@
+<div class="mimir-container">
+  <header class="mimir-header">
+    <div class="logo">
+      <span class="mimir-icon">👁️</span>
+      <h1>Mimir Control</h1>
+    </div>
+    <div class="header-actions">
+      <button class="btn-primary" (click)="startDiscovery()" [disabled]="scanning()">
+        {{ scanning() ? 'Scanning...' : 'Scan Network' }}
+      </button>
+      <button class="btn-secondary" (click)="refreshDevices()">🔄</button>
+    </div>
+  </header>
+
+  <main class="mimir-content">
+    @if (loading() && devices().length === 0) {
+      <div class="status-message">
+        <div class="spinner"></div>
+        <p>Seeking wisdom from the network...</p>
+      </div>
+    } @else {
+      <div class="device-grid">
+        @for (tv of devices(); track tv.ip) {
+          <div class="device-card">
+            <div class="device-info">
+              <span class="brand-badge" [attr.data-brand]="tv.brand">{{ tv.brand }}</span>
+              <h2 class="device-name">{{ tv.name }}</h2>
+              <p class="device-model">{{ tv.model }}</p>
+              <p class="device-ip">{{ tv.ip }}</p>
+            </div>
+
+            <div class="command-section">
+              <h3>Remote Controls</h3>
+              <div class="command-buttons">
+                @for (cmd of tv.commands; track cmd) {
+                  <button class="btn-command" (click)="sendCommand(tv.ip, cmd)">
+                    {{ cmd }}
+                  </button>
+                }
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <span class="last-seen">Seen: {{ tv.lastFound | date: 'HH:mm:ss' }}</span>
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-state">
+            <p>No TVs discovered yet.</p>
+            <p class="hint">Make sure your TVs are on and connected to the same network.</p>
+          </div>
+        }
+      </div>
+    }
+  </main>
+
+  @if (scanning()) {
+    <div class="scanning-toast">
+      <div class="progress-bar"></div>
+      <span>SSDP Discovery in progress...</span>
+    </div>
+  }
+</div>
+<router-outlet />
