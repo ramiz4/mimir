@@ -1,13 +1,48 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-/* You can add global styles to this file, and also import other style files */
-body {
-  @apply bg-[#0f172a] text-[#f8fafc] min-h-screen antialiased;
-  font-family:
-    'Inter',
-    -apple-system,
-    system-ui,
-    sans-serif;
+@theme {
+  --color-mimir-primary: #6366f1;
+  --color-mimir-primary-hover: #4f46e5;
+  --color-mimir-dark: #0f172a;
+  --color-mimir-card: #1e293b;
+  --color-mimir-muted: #94a3b8;
+  --color-mimir-sony: #0072ce;
+  --color-mimir-samsung: #1428a0;
+  --color-mimir-lg: #a50034;
+
+  --animate-progress: progress 2s ease-in-out infinite;
+  --animate-slide-in: slideIn 0.3s ease-out;
+
+  @keyframes progress {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    100% {
+      transform: translateX(200%);
+    }
+  }
+
+  @keyframes slideIn {
+    0% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-mimir-dark text-slate-50 min-h-screen antialiased;
+    font-family:
+      'Inter',
+      -apple-system,
+      system-ui,
+      sans-serif;
+  }
 }
