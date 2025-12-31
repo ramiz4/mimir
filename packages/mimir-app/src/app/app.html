@@ -1,156 +1,394 @@
-<div class="mx-auto max-w-[1200px] p-8">
-  <header class="mb-12 flex items-center justify-between border-b border-white/5 pb-6">
-    <div class="flex items-center gap-4">
-      <lucide-icon
-        [img]="Eye"
-        class="text-mimir-primary h-12 w-12 drop-shadow-[0_0_10px_rgba(99,102,241,0.5)]"
-      ></lucide-icon>
-      <h1
-        class="m-0 bg-linear-to-br from-white to-mimir-primary bg-clip-text text-[2rem] font-bold text-transparent"
-      >
-        Mimir Control
-      </h1>
-    </div>
-    <div class="flex gap-4">
-      <button
-        class="cursor-pointer rounded-[12px] bg-mimir-primary px-6 py-3 font-semibold text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:bg-mimir-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
-        (click)="startDiscovery()"
-        [disabled]="scanning()"
-      >
-        {{ scanning() ? 'Scanning...' : 'Scan Network' }}
-      </button>
-      <button
-        class="cursor-pointer rounded-[12px] border border-white/5 bg-mimir-card p-3 text-white transition-all duration-200 hover:bg-slate-700"
-        (click)="refreshDevices()"
-      >
-        <lucide-icon [img]="RefreshCw" class="h-5 w-5"></lucide-icon>
-      </button>
-    </div>
-  </header>
+<div
+  class="min-h-screen relative overflow-hidden bg-linear-to-br from-[#0b0c15] to-[#1a1b26] pb-10"
+>
+  <!-- Background Glow Effects -->
+  <div
+    class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-mimir-primary/10 blur-[120px] pointer-events-none"
+  ></div>
+  <div
+    class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-purple-500/10 blur-[120px] pointer-events-none"
+  ></div>
 
-  <main>
-    @if (loading() && devices().length === 0) {
-      <div class="py-20 text-center">
-        <lucide-icon
-          [img]="Loader2"
-          class="mx-auto mb-4 h-10 w-10 animate-spin text-mimir-primary"
-        ></lucide-icon>
-        <p>Seeking wisdom from the network...</p>
-      </div>
-    } @else {
-      <div class="grid grid-cols-[repeat(auto-fill,minmax(350px,1fr))] gap-8">
-        @for (tv of devices(); track tv.ip) {
+  <div class="mx-auto max-w-[1200px] p-6 relative z-10">
+    <!-- Header -->
+    <header class="mb-10 flex items-center justify-between">
+      <div class="flex items-center gap-4 select-none cursor-pointer" (click)="clearActiveDevice()">
+        <div class="relative group">
           <div
-            class="group flex flex-col gap-6 rounded-[12px] border border-white/5 bg-mimir-card p-6 transition-transform duration-300 ease-in-out hover:-translate-y-1.25 hover:border-mimir-primary/30"
-          >
-            <div class="flex flex-col">
-              <span
-                class="mb-2 self-start rounded-[4px] bg-white/10 px-[0.6rem] py-1 text-[0.7rem] font-extrabold uppercase"
-                [ngClass]="{
-                  'text-[#5bc0de]': tv.brand === 'Sony',
-                  'text-[#f0ad4e]': tv.brand === 'Samsung',
-                  'text-[#d9534f]': tv.brand === 'LG',
-                }"
-              >
-                {{ tv.brand }}
-              </span>
-              <h2 class="m-0 text-[1.25rem]">{{ tv.name }}</h2>
-              <p class="my-1 text-[0.9rem] text-mimir-muted">{{ tv.model }}</p>
-              <div class="flex items-center justify-between">
-                <p class="m-0 font-mono text-[0.85rem] text-mimir-primary">{{ tv.ip }}</p>
-                <button
-                  class="cursor-pointer rounded-[4px] bg-white/10 px-2 py-1 text-[0.75rem] font-semibold text-white transition-colors hover:bg-mimir-primary"
-                  (click)="initConnection(tv.ip)"
-                >
-                  Connect
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <h3 class="mb-4 text-[0.85rem] uppercase text-mimir-muted">Remote Controls</h3>
-              <div class="flex flex-wrap gap-2">
-                @for (cmd of tv.commands; track cmd) {
-                  <button
-                    class="cursor-pointer rounded-[6px] border border-white/5 bg-white/5 px-[0.8rem] py-[0.4rem] text-[0.85rem] text-white transition-all duration-150 hover:border-mimir-primary hover:bg-[#334155] active:scale-95 active:bg-mimir-primary"
-                    (click)="sendCommand(tv.ip, cmd)"
-                  >
-                    {{ cmd }}
-                  </button>
-                }
-              </div>
-            </div>
-
-            <div class="mt-auto border-t border-white/5 pt-4 text-[0.75rem] text-mimir-muted">
-              <span>Seen: {{ tv.lastFound | date: 'HH:mm:ss' }}</span>
-            </div>
-          </div>
-        } @empty {
-          <div
-            class="col-span-full rounded-[12px] border-2 border-dashed border-white/5 bg-white/5 py-20 text-center"
-          >
-            <p>No TVs discovered yet.</p>
-            <p class="text-[0.9rem] text-mimir-muted">
-              Make sure your TVs are on and connected to the same network.
-            </p>
-          </div>
-        }
+            class="absolute inset-0 bg-mimir-primary/50 blur-lg rounded-full opacity-50 group-hover:opacity-100 transition-opacity"
+          ></div>
+          <lucide-icon
+            [img]="Eye"
+            class="relative z-10 text-white h-10 w-10 transition-transform group-hover:scale-110"
+          ></lucide-icon>
+        </div>
+        <h1
+          class="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-white to-white/60 tracking-tight"
+        >
+          Mimir
+        </h1>
       </div>
-    }
-  </main>
 
-  @if (scanning()) {
-    <div
-      class="fixed bottom-8 right-8 flex animate-slideIn flex-col gap-2 rounded-[12px] bg-mimir-primary px-8 py-4 shadow-2xl"
-    >
-      <div class="relative h-[3px] overflow-hidden rounded-[2px] bg-white/30">
-        <div class="absolute left-0 top-0 h-full w-1/2 animate-progress bg-white"></div>
-      </div>
-      <span>SSDP Discovery in progress...</span>
-    </div>
-  }
-  @if (pinRequired()) {
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div
-        class="w-full max-w-md rounded-[16px] border border-white/10 bg-mimir-card p-6 shadow-2xl"
-      >
-        <h3 class="mb-4 text-xl font-bold text-white">Enter PIN</h3>
-        <p class="mb-6 text-sm text-mimir-muted">
-          Please enter the pairing code displayed on your TV.
-        </p>
-
-        <input
-          #pinInput
-          type="text"
-          placeholder="0000"
-          class="mb-6 w-full rounded-[8px] border border-white/10 bg-black/20 p-4 text-center text-2xl font-mono tracking-[0.5em] text-white outline-none focus:border-mimir-primary focus:ring-1 focus:ring-mimir-primary"
-          (keyup.enter)="submitPin(pinInput.value)"
-        />
-
-        <div class="flex gap-3">
+      @if (!activeDevice()) {
+        <div class="flex gap-3 animate-fade-in">
           <button
-            (click)="cancelPin()"
-            class="flex-1 rounded-[8px] bg-white/5 py-3 font-semibold text-white transition-colors hover:bg-white/10"
+            class="glass-panel px-5 py-2.5 rounded-full font-medium text-sm text-white/90 hover:bg-white/10 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            (click)="startDiscovery()"
+            [disabled]="scanning()"
           >
-            Cancel
+            @if (scanning()) {
+              <lucide-icon [img]="Loader2" class="h-4 w-4 animate-spin"></lucide-icon>
+            }
+            {{ scanning() ? 'Scanning...' : 'Scan Network' }}
           </button>
           <button
-            (click)="submitPin(pinInput.value)"
-            class="flex-1 rounded-[8px] bg-mimir-primary py-3 font-semibold text-white transition-colors hover:bg-mimir-primary-hover"
+            class="glass-panel p-2.5 rounded-full text-white/90 hover:bg-white/10 hover:text-white transition-all active:scale-95"
+            (click)="refreshDevices()"
+            title="Refresh Devices"
           >
-            Connect
+            <lucide-icon [img]="RefreshCw" class="h-5 w-5"></lucide-icon>
           </button>
         </div>
+      }
+    </header>
+
+    <main>
+      @if (!activeDevice()) {
+        <!-- Device Discovery Grid -->
+        <div class="animate-fade-in">
+          @if (loading() && devices().length === 0) {
+            <div class="flex flex-col items-center justify-center py-32 text-center">
+              <div class="relative">
+                <div
+                  class="absolute inset-0 bg-mimir-primary/20 blur-xl rounded-full animate-pulse"
+                ></div>
+                <lucide-icon
+                  [img]="Loader2"
+                  class="relative z-10 h-16 w-16 animate-spin text-mimir-primary mb-6"
+                ></lucide-icon>
+              </div>
+              <p class="text-xl text-white/60 font-medium">Scanning ether for devices...</p>
+            </div>
+          } @else {
+            <h2 class="text-white/40 uppercase tracking-widest text-xs font-bold mb-6 px-2">
+              Available Devices
+            </h2>
+            <div class="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
+              @for (tv of devices(); track tv.ip) {
+                <div
+                  class="glass-panel group relative overflow-hidden rounded-3xl p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-mimir-primary/20 cursor-pointer"
+                  (click)="selectDevice(tv)"
+                >
+                  <!-- Card Decoration -->
+                  <div
+                    class="absolute top-0 right-0 p-4 opacity-50 transition-opacity group-hover:opacity-100"
+                  >
+                    <div class="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]"></div>
+                  </div>
+
+                  <div class="flex items-start gap-4 mb-8">
+                    <div
+                      class="h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/50 group-hover:text-white group-hover:bg-white/10 transition-colors"
+                    >
+                      <lucide-icon [img]="Loader2" class="h-6 w-6" *ngIf="false"></lucide-icon>
+                      <!-- Placeholder for TV Icon -->
+                      <span class="text-lg font-bold">{{ tv.brand.substring(0, 1) }}</span>
+                    </div>
+                    <div>
+                      <h3
+                        class="text-lg font-bold text-white group-hover:text-mimir-primary transition-colors leading-tight"
+                      >
+                        {{ tv.name }}
+                      </h3>
+                      <p class="text-sm text-white/40 mt-1">{{ tv.model }}</p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center justify-between mt-auto">
+                    <span
+                      class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded bg-white/5 text-white/40 border border-white/5"
+                    >
+                      {{ tv.brand }}
+                    </span>
+                    <span
+                      class="text-xs font-mono text-white/30 group-hover:text-white/60 transition-colors"
+                    >
+                      {{ tv.ip }}
+                    </span>
+                  </div>
+
+                  <!-- Connect Overlay -->
+                  <div
+                    class="absolute inset-0 bg-mimir-primary/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm"
+                  >
+                    <span class="text-white font-bold tracking-wide flex items-center gap-2">
+                      Connect <lucide-icon [img]="ChevronRight" class="h-4 w-4"></lucide-icon>
+                    </span>
+                  </div>
+                </div>
+              } @empty {
+                <div
+                  class="col-span-full glass-panel rounded-3xl p-12 text-center border-dashed border-white/10"
+                >
+                  <p class="text-lg text-white/60 font-medium">No devices found in the vicinity.</p>
+                  <p class="text-sm text-white/30 mt-2">
+                    Ensure your TV is powered on and connected to the network.
+                  </p>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      } @else {
+        <!-- Remote Control View -->
+        <div class="animate-scale-in flex flex-col items-center">
+          <!-- Navigation Bar for Remote -->
+          <div class="w-full max-w-md flex items-center justify-between mb-8 px-4">
+            <button
+              (click)="clearActiveDevice()"
+              class="flex items-center gap-2 text-white/50 hover:text-white transition-colors group"
+            >
+              <lucide-icon
+                [img]="ArrowLeft"
+                class="h-5 w-5 transition-transform group-hover:-translate-x-1"
+              ></lucide-icon>
+              <span class="text-sm font-medium">Devices</span>
+            </button>
+            <div class="text-center">
+              <h2 class="text-white font-semibold tracking-wide">{{ activeDevice()?.name }}</h2>
+              <span class="text-[10px] uppercase tracking-widest text-mimir-primary">{{
+                activeDevice()?.brand
+              }}</span>
+            </div>
+            <button class="p-2 text-white/50 hover:text-white transition-colors">
+              <lucide-icon [img]="Settings" class="h-5 w-5"></lucide-icon>
+            </button>
+          </div>
+
+          <!-- The Remote Unit -->
+          <div
+            class="glass-panel relative w-full max-w-[320px] rounded-[3rem] p-6 border-white/10 shadow-[0_0_50px_-10px_rgba(99,102,241,0.15)] bg-black/40 backdrop-blur-2xl"
+          >
+            <!-- Top Controls -->
+            <div class="flex justify-between items-center mb-10 px-2">
+              <button
+                class="remote-button w-12 h-12 text-white/50 hover:text-white hover:bg-white/10"
+                (click)="sendCommand('Input')"
+              >
+                <span class="text-[10px] font-bold uppercase tracking-wider">Input</span>
+              </button>
+              <button
+                class="remote-button w-14 h-14 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white hover:shadow-[0_0_20px_rgba(239,68,68,0.4)]"
+                (click)="sendCommand('Power')"
+              >
+                <lucide-icon [img]="Power" class="h-6 w-6"></lucide-icon>
+              </button>
+            </div>
+
+            <!-- D-Pad Navigation -->
+            <div class="relative w-64 h-64 mx-auto mb-10">
+              <!-- D-Pad Background -->
+              <div class="absolute inset-0 rounded-full border border-white/5 bg-white/2"></div>
+
+              <!-- Up -->
+              <button
+                class="absolute top-2 left-1/2 -translate-x-1/2 w-16 h-12 flex justify-center items-start pt-2 text-white/70 hover:text-white active:scale-90 transition-all cursor-pointer z-10"
+                (click)="sendCommand('Up')"
+              >
+                <lucide-icon [img]="ChevronUp" class="h-8 w-8"></lucide-icon>
+              </button>
+              <!-- Down -->
+              <button
+                class="absolute bottom-2 left-1/2 -translate-x-1/2 w-16 h-12 flex justify-center items-end pb-2 text-white/70 hover:text-white active:scale-90 transition-all cursor-pointer z-10"
+                (click)="sendCommand('Down')"
+              >
+                <lucide-icon [img]="ChevronDown" class="h-8 w-8"></lucide-icon>
+              </button>
+              <!-- Left -->
+              <button
+                class="absolute left-2 top-1/2 -translate-y-1/2 h-16 w-12 flex items-center justify-start pl-2 text-white/70 hover:text-white active:scale-90 transition-all cursor-pointer z-10"
+                (click)="sendCommand('Left')"
+              >
+                <lucide-icon [img]="ChevronLeft" class="h-8 w-8"></lucide-icon>
+              </button>
+              <!-- Right -->
+              <button
+                class="absolute right-2 top-1/2 -translate-y-1/2 h-16 w-12 flex items-center justify-end pr-2 text-white/70 hover:text-white active:scale-90 transition-all cursor-pointer z-10"
+                (click)="sendCommand('Right')"
+              >
+                <lucide-icon [img]="ChevronRight" class="h-8 w-8"></lucide-icon>
+              </button>
+
+              <!-- OK Center -->
+              <button
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-linear-to-br from-white/10 to-white/5 shadow-inner border border-white/10 flex items-center justify-center text-white font-bold tracking-widest text-sm hover:scale-105 active:scale-95 transition-all cursor-pointer z-20"
+                (click)="sendCommand('Confirm')"
+              >
+                OK
+              </button>
+            </div>
+
+            <!-- Utility Row (Back/Home) -->
+            <div class="flex justify-between px-8 mb-10">
+              <button
+                class="remote-button w-12 h-12 text-white/60 hover:text-white bg-white/5"
+                (click)="sendCommand('Back')"
+              >
+                <lucide-icon [img]="ArrowLeft" class="h-5 w-5"></lucide-icon>
+              </button>
+              <button
+                class="remote-button w-12 h-12 text-white/60 hover:text-white bg-white/5"
+                (click)="sendCommand('Home')"
+              >
+                <lucide-icon [img]="Home" class="h-5 w-5"></lucide-icon>
+              </button>
+            </div>
+
+            <!-- Volume and Channel Rockers -->
+            <div class="grid grid-cols-2 gap-6 px-4 mb-10">
+              <!-- Volume -->
+              <div
+                class="h-32 rounded-2xl bg-white/5 border border-white/5 flex flex-col justify-between p-1 overflow-hidden relative"
+              >
+                <button
+                  class="flex-1 w-full flex items-center justify-center text-white/60 hover:bg-white/10 hover:text-white active:bg-white/20 transition-all rounded-t-xl"
+                  (click)="sendCommand('VolumeUp')"
+                >
+                  <lucide-icon [img]="Volume2" class="h-5 w-5"></lucide-icon>
+                </button>
+                <div class="h-px bg-white/5 w-full"></div>
+                <button
+                  class="flex-1 w-full flex items-center justify-center text-white/60 hover:bg-white/10 hover:text-white active:bg-white/20 transition-all rounded-b-xl"
+                  (click)="sendCommand('VolumeDown')"
+                >
+                  <lucide-icon [img]="Volume2" class="h-4 w-4 opacity-50"></lucide-icon>
+                </button>
+                <span
+                  class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[9px] font-bold text-white/20 uppercase tracking-widest pointer-events-none"
+                  >Vol</span
+                >
+              </div>
+
+              <!-- Channel -->
+              <div
+                class="h-32 rounded-2xl bg-white/5 border border-white/5 flex flex-col justify-between p-1 overflow-hidden relative"
+              >
+                <button
+                  class="flex-1 w-full flex items-center justify-center text-white/60 hover:bg-white/10 hover:text-white active:bg-white/20 transition-all rounded-t-xl"
+                  (click)="sendCommand('ChannelUp')"
+                >
+                  <lucide-icon [img]="ChevronUp" class="h-5 w-5"></lucide-icon>
+                </button>
+                <div class="h-px bg-white/5 w-full"></div>
+                <button
+                  class="flex-1 w-full flex items-center justify-center text-white/60 hover:bg-white/10 hover:text-white active:bg-white/20 transition-all rounded-b-xl"
+                  (click)="sendCommand('ChannelDown')"
+                >
+                  <lucide-icon [img]="ChevronDown" class="h-5 w-5"></lucide-icon>
+                </button>
+                <span
+                  class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[9px] font-bold text-white/20 uppercase tracking-widest pointer-events-none"
+                  >Ch</span
+                >
+              </div>
+            </div>
+
+            <!-- Media Controls -->
+            <div class="flex justify-between items-center px-4 mb-2">
+              <button class="remote-button w-10 h-10 text-white/50" (click)="sendCommand('Rewind')">
+                <lucide-icon [img]="SkipBack" class="h-4 w-4"></lucide-icon>
+              </button>
+              <button
+                class="remote-button w-14 h-14 bg-mimir-primary text-white shadow-[0_4px_20px_rgba(99,102,241,0.4)] hover:scale-105 active:scale-95"
+                (click)="sendCommand('Play')"
+              >
+                <lucide-icon [img]="Play" class="h-6 w-6 fill-current"></lucide-icon>
+              </button>
+              <button
+                class="remote-button w-10 h-10 text-white/50"
+                (click)="sendCommand('FastForward')"
+              >
+                <lucide-icon [img]="SkipForward" class="h-4 w-4"></lucide-icon>
+              </button>
+            </div>
+
+            <!-- Extra Utilities (Number Pad Toggle?) -->
+            <div class="mt-8 pt-4 border-t border-white/5 flex justify-center">
+              <button
+                class="text-[10px] text-white/30 uppercase tracking-widest flex items-center gap-1 hover:text-white transition-colors"
+                (click)="sendCommand('Menu')"
+              >
+                <lucide-icon [img]="Grid" class="h-3 w-3"></lucide-icon> More Controls
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </main>
+
+    @if (scanning()) {
+      <div
+        class="fixed bottom-8 right-8 flex flex-col gap-2 rounded-2xl bg-mimir-primary px-6 py-4 shadow-[0_10px_40px_-10px_rgba(99,102,241,0.5)] z-50 animate-slide-in"
+      >
+        <div class="flex items-center gap-3">
+          <lucide-icon [img]="Loader2" class="h-5 w-5 text-white animate-spin"></lucide-icon>
+          <span class="text-white font-medium text-sm">Discovering devices...</span>
+        </div>
       </div>
-    </div>
-  }
-  @if (modalState()) {
-    <app-modal
-      [title]="modalState()!.title"
-      [message]="modalState()!.message"
-      [type]="modalState()!.type"
-      (close)="closeModal()"
-    />
-  }
+    }
+
+    <!-- PIN Modal -->
+    @if (pinRequired()) {
+      <div
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md animate-fade-in"
+      >
+        <div
+          class="w-full max-w-md rounded-3xl border border-white/10 bg-[#1e293b] p-8 shadow-2xl relative overflow-hidden"
+        >
+          <!-- Background accent -->
+          <div
+            class="absolute top-0 right-0 w-32 h-32 bg-mimir-primary/10 rounded-full blur-3xl pointer-events-none translate-x-10 -translate-y-10"
+          ></div>
+
+          <h3 class="mb-2 text-2xl font-bold text-white">Device Pairing</h3>
+          <p class="mb-8 text-sm text-mimir-muted">Enter the code shown on your TV to connect.</p>
+
+          <input
+            #pinInput
+            type="text"
+            placeholder="0000"
+            class="mb-8 w-full rounded-2xl border border-white/10 bg-black/40 p-5 text-center text-3xl font-mono tracking-[0.5em] text-white outline-none focus:border-mimir-primary focus:ring-1 focus:ring-mimir-primary transition-all shadow-inner"
+            (keyup.enter)="submitPin(pinInput.value)"
+            autofocus
+          />
+
+          <div class="flex gap-4">
+            <button
+              (click)="cancelPin()"
+              class="flex-1 rounded-xl bg-white/5 py-3.5 font-semibold text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              Cancel
+            </button>
+            <button
+              (click)="submitPin(pinInput.value)"
+              class="flex-1 rounded-xl bg-linear-to-r from-mimir-primary to-indigo-600 py-3.5 font-semibold text-white transition-all hover:shadow-lg hover:shadow-indigo-500/25 active:scale-95"
+            >
+              Verify PIN
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Alert Modal -->
+    @if (modalState()) {
+      <app-modal
+        [title]="modalState()!.title"
+        [message]="modalState()!.message"
+        [type]="modalState()!.type"
+        (close)="closeModal()"
+      />
+    }
+  </div>
 </div>
 <router-outlet />

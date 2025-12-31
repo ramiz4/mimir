@@ -4,7 +4,28 @@ import { RouterOutlet } from '@angular/router';
 import { TvService } from './services/tv.service';
 import { DeviceInfo } from '@mimir/shared';
 import { ModalComponent } from './components/modal/modal.component';
-import { LucideAngularModule, Eye, RefreshCw, Loader2 } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  Eye,
+  RefreshCw,
+  Loader2,
+  Power,
+  Menu,
+  Home,
+  ChevronUp,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Volume2,
+  VolumeX,
+  ArrowLeft,
+  Settings,
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  Grid,
+} from 'lucide-angular';
 
 @Component({
   selector: 'app-root',
@@ -14,15 +35,27 @@ import { LucideAngularModule, Eye, RefreshCw, Loader2 } from 'lucide-angular';
   styleUrl: './app.css',
 })
 export class App implements OnInit {
-  // We need to expose icons to the template if we want to use [img] binding,
-  // OR we use the name attribute if we provided them.
-  // But LucideAngularModule.pick({ ... }) returns a ModuleWithProviders.
-  // Let's use the provider approach which is arguably safer if pick isn't working as I expect in this specific version.
-  // Actually, let's stick to the most robust way:
-  // Import the icons in the class and bind them: <lucide-icon [img]="Eye" />
+  // Icons
   readonly Eye = Eye;
   readonly RefreshCw = RefreshCw;
   readonly Loader2 = Loader2;
+  readonly Power = Power;
+  readonly Menu = Menu;
+  readonly Home = Home;
+  readonly ChevronUp = ChevronUp;
+  readonly ChevronDown = ChevronDown;
+  readonly ChevronLeft = ChevronLeft;
+  readonly ChevronRight = ChevronRight;
+  readonly Volume2 = Volume2;
+  readonly VolumeX = VolumeX;
+  readonly ArrowLeft = ArrowLeft;
+  readonly Settings = Settings;
+  readonly Play = Play;
+  readonly Pause = Pause;
+  readonly SkipBack = SkipBack;
+  readonly SkipForward = SkipForward;
+  readonly Grid = Grid;
+
   private tvService = inject(TvService);
 
   protected readonly title = signal('Mimir Control');
@@ -30,6 +63,9 @@ export class App implements OnInit {
   protected readonly loading = signal(false);
   protected readonly scanning = signal(false);
   protected readonly pinRequired = signal<string | null>(null);
+
+  // New state for active remote view
+  protected readonly activeDevice = signal<DeviceInfo | null>(null);
 
   protected readonly modalState = signal<{
     title: string;
@@ -42,11 +78,22 @@ export class App implements OnInit {
   }
 
   refreshDevices(): void {
-    this.loading.set(true);
+    // Only show loading if we don't have devices yet
+    if (this.devices().length === 0) {
+      this.loading.set(true);
+    }
+
     this.tvService.getDevices().subscribe({
       next: (devices) => {
         this.devices.set(devices);
         this.loading.set(false);
+
+        // If we have an active device, update it with fresh data
+        const active = this.activeDevice();
+        if (active) {
+          const found = devices.find((d) => d.ip === active.ip);
+          if (found) this.activeDevice.set(found);
+        }
       },
       error: () => this.loading.set(false),
     });
@@ -55,7 +102,6 @@ export class App implements OnInit {
   startDiscovery(): void {
     this.scanning.set(true);
     this.tvService.discover().subscribe(() => {
-      // Small delay to let discovery work before auto-refresh
       setTimeout(() => {
         this.refreshDevices();
         this.scanning.set(false);
@@ -63,23 +109,41 @@ export class App implements OnInit {
     });
   }
 
-  sendCommand(ip: string, command: string): void {
-    this.tvService.sendCommand(ip, command).subscribe({
+  selectDevice(device: DeviceInfo): void {
+    if (this.activeDevice()?.ip !== device.ip) {
+      this.activeDevice.set(device);
+      // Auto-register/connect when opening remote
+      this.initConnection(device.ip, true);
+    }
+  }
+
+  clearActiveDevice(): void {
+    this.activeDevice.set(null);
+  }
+
+  sendCommand(command: string): void {
+    const device = this.activeDevice();
+    if (!device) return;
+
+    // Visual feedback could be handled here if we wanted to vibrate or something
+    this.tvService.sendCommand(device.ip, command).subscribe({
       next: (res) => console.log('Command sent:', res),
       error: (err) => console.error('Command failed:', err),
     });
   }
 
-  initConnection(ip: string): void {
+  initConnection(ip: string, silent = false): void {
     this.tvService.register(ip).subscribe({
       next: (res) => {
         if (res.pinRequired) {
           this.pinRequired.set(ip);
-        } else {
+        } else if (!silent) {
           this.showModal('Success', 'Connected successfully! No PIN required.', 'success');
         }
       },
-      error: (err) => this.showModal('Connection Failed', err.message, 'error'),
+      error: (err) => {
+        if (!silent) this.showModal('Connection Failed', err.message, 'error');
+      },
     });
   }
 
