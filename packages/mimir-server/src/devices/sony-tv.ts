@@ -39,10 +39,13 @@ export class SonyTV extends BaseTV {
 
     try {
       logger.info(`Sending Sony command: ${commandName}`, { brand: this.brand, ip: this.ip });
+      const psk = process.env['SONY_PSK'] || '0000'; // Default to 0000 which is common
+
       await axios.post(url, xml, {
         headers: {
           'Content-Type': 'text/xml; charset=utf-8',
           SOAPACTION: '"urn:schemas-sony-com:service:IRCC:1#X_SendIRCC"',
+          'X-Auth-PSK': psk,
         },
         timeout: 3000,
       });

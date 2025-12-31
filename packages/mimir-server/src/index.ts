@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import app from './app.js';
 import { discoveryService } from './services/discovery.service.js';
 import logger from './utils/logger.js';
