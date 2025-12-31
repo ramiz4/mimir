@@ -30,7 +30,7 @@ pids
 .env*.local
 
 # IDEs and editors
-.vscode/
+
 .idea/
 *.suo
 *.ntvs*
