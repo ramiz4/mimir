@@ -50,7 +50,7 @@ Ensure you have the following installed:
 Clone the repository and install dependencies:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/ramiz4/mimir.git
 cd mimir
 pnpm install
 ```
