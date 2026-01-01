@@ -125,7 +125,11 @@ export class App implements OnInit {
     const device = this.activeDevice();
     if (!device) return;
 
-    // Visual feedback could be handled here if we wanted to vibrate or something
+    // Haptic feedback
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate(50);
+    }
+
     this.tvService.sendCommand(device.ip, command).subscribe({
       next: (res) => console.log('Command sent:', res),
       error: (err) => console.error('Command failed:', err),

@@ -4,7 +4,7 @@ This document outlines the planned future features and enhancements for the Mimi
 
 ## 1. Enhanced User Experience
 
-- [ ] **Haptic Feedback**: Implement `navigator.vibrate` to provide tactile feedback when users press buttons on their mobile devices.
+- [x] **Haptic Feedback**: Implement `navigator.vibrate` to provide tactile feedback when users press buttons on their mobile devices.
 - [ ] **Customizable Layouts**: Allow users to drag-and-drop buttons or toggle visibility of specific sections (e.g., Number Pad, Media Controls).
 - [ ] **Themes**: Add selectable color themes beyond the default dark mode, including high-contrast options.
 - [ ] **Gesture Control**: Implementing swipe gestures on the touchpad area for navigation (Up/Down/Left/Right).
