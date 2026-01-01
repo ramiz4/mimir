@@ -33,8 +33,8 @@ export class SonyTV extends BaseTV {
       version: '1.0',
       params: [
         {
-          clientid: 'LokiRemote',
-          nickname: 'Loki Remote',
+          clientid: 'Mimir',
+          nickname: 'Mimir',
           level: 'private',
         },
         [{ value: 'yes', function: 'WOL' }],
@@ -62,8 +62,8 @@ export class SonyTV extends BaseTV {
       version: '1.0',
       params: [
         {
-          clientid: 'LokiRemote',
-          nickname: 'Loki Remote',
+          clientid: 'Mimir',
+          nickname: 'Mimir',
           level: 'private',
         },
         [{ value: 'yes', function: 'WOL' }],

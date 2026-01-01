@@ -51,7 +51,7 @@ Clone the repository and install dependencies:
 
 ```bash
 git clone <repository-url>
-cd loki-remote
+cd mimir
 pnpm install
 ```
 

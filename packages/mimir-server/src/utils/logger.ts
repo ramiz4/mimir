@@ -16,7 +16,7 @@ const logger = winston.createLogger({
     errors({ stack: true }), // capture stack traces if present
     json()
   ),
-  defaultMeta: { service: 'loki-remote' },
+  defaultMeta: { service: 'mimir' },
   transports: [
     // Output all logs to console with colors and custom format
     new winston.transports.Console({
